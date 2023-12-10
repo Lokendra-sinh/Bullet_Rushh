@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .playerDetails{
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: black;
+  color: white;
+  width: 200px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  }
+  
+  canvas {
+    display: block;
+    background-color: grey;
+  }
