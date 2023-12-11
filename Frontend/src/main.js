@@ -1,41 +1,30 @@
-import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, GithubAuthProvider, signInWithRedirect, getRedirectResult, signOut, reauthenticateWithPopup } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
 const loginBtn = document.querySelector('.loginBtn');
 loginBtn.addEventListener('click', () => {
-  githubSignInRedirect();
-})
+  githubSignIn();
+});
 
-// const googleSignIn = async () => {
-// const provider = new GoogleAuthProvider();
-// try{
-//   const result = await signInWithPopup(auth, provider);
-//   const user = result.user;
-//   console.log("user details are: ", user);
-// } catch (error){
-//   console.log("error is: ", error);
-// }
-// }
-
-const githubSignInRedirect = async () => {
+const githubSignIn = async () => {
   const provider = new GithubAuthProvider();
+
   try {
-    // Start the GitHub sign-in process
-    await signInWithRedirect(auth, provider);
-
-    // Handle the result on the redirected page
-    const result = await getRedirectResult(auth);
-
-    // Get user details from the result
+    // Start the GitHub sign-in process with popup
+    const result = await signInWithPopup(auth, provider);
     const user = result.user;
-    console.log("User details are: ", user);
+    playerName.textContent = user.displayName;
+    console.log("logged in user is: ", user);
   } catch (error) {
-    // Handle Errors here
-    console.error("Error during GitHub sign-in:", error);
+    // Handle sign-in errors
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log("error code: ", errorCode);
+    console.log("error message: ", errorMessage);
   }
 };
 
-
+const playerName = document.querySelector('.name');
 const canvas = document.getElementById("aimingCanvas");
 const ctx = canvas.getContext("2d");
 
