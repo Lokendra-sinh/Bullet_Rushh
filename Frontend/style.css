@@ -53,5 +53,6 @@ body {
   canvas {
     margin: 0;
     display: block;
-    background: url('./Assets/bg_universe1.jpg');
+    background-color: black;
+    /* background: url('./Assets/bg_universe1.jpg'); */
   }

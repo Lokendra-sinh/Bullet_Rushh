@@ -21,49 +21,21 @@ io.on("connect", (socket) => {
     y: Math.floor(Math.random() * 600),
     color: `hsl(${Math.random() * 360}, ${100}%, ${50}%)`,
     radius: 10,
+    requestNumber: 0,
   };
 
   io.emit('updateFrontendPlayers', backendPlayers);
 
-  socket.on('frontendBullets', (frontendBullet) => {
-    bulletId++;
-    const currentPlayer = backendPlayers[socket.id];
-    const angle = Math.atan2(frontendBullet.y - currentPlayer.y, frontendBullet.x - currentPlayer.x);
-    const bulletVelocity = {
-        x: bulletSpeed * Math.cos(angle),
-        y: bulletSpeed * Math.sin(angle),
-    }
-    const newBullet = {
-        x: currentPlayer.x,
-        y: currentPlayer.y,
-        velocity: bulletVelocity,
-        color: backendPlayers[socket.id].color,
-        radius: bulletRadius,
-        playerId: socket.id,
-    }
-
-    backendBullets[bulletId] = newBullet;
-
-    
-
-  })
-
-  function updateBulletPositions(){
-    for(const id in backendBullets){
-       backendBullets[id].x += backendBullets[id].velocity.x;
-       backendBullets[id].y += backendBullets[id].velocity.y;
-    }
-    io.emit('updatedBackendBullets', backendBullets);
-  }
-  
   socket.on('disconnect', () => {
     console.log("inside disconnect");
     delete backendPlayers[socket.id];
     io.emit('playerLeft', socket.id);
   });
 
-  socket.on('keydown', (keycode) => {
-    console.log(keycode);
+
+  //server reconc
+  socket.on('keydown', (keycode, requestNumber) => {
+    backendPlayers[socket.id].requestNumber = requestNumber;
       switch (keycode) {
           case "ArrowUp":
             backendPlayers[socket.id].y -= playerSpeed;
@@ -83,7 +55,7 @@ io.on("connect", (socket) => {
 
 setInterval(() => {
  io.emit('updateFrontendPlayers', backendPlayers);
-},30);
+},1000/60);
 
 server.listen(3000, () => {
   console.log("Server started on port 3000");
