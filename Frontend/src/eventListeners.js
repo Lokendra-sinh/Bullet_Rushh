@@ -1,44 +1,36 @@
-// addEventListener("resize", handleResize);
+import { canvas, frontendPlayers, socket, dpi } from './gameLogic';
 
-// addEventListener("keydown", (event) => {
-//     console.log("inside keydown event");
-//     const currentPlayer = frontendPlayers[socket.id];
-//     if (!currentPlayer) return;
-//     switch (event.key) {
-//       case "ArrowUp":
-//         socket.emit("keydown", "ArrowUp");
-//         break;
+window.addEventListener("keydown", (event) => {
+    keys[event.key] = true;
+  });
   
-//       case "ArrowDown":
-//         socket.emit("keydown", "ArrowDown");
-//         break;
+  window.addEventListener("keyup", (event) => {
+    keys[event.key] = false;
+  });
   
-//       case "ArrowLeft":
-//         socket.emit("keydown", "ArrowLeft");
-//         break;
+  canvas.addEventListener("click", (event) => {
+    // console.log("mouse clicked: ", event.clientX, event.clientY);
+    const c = canvas.getBoundingClientRect();
+    // console.log("canvas: ", c.top, c.left);
+    const player = {
+      x: frontendPlayers[socket.id].x,
+      y: frontendPlayers[socket.id].y,
+    }
+    console.log("player: ", frontendPlayers[socket.id].x, frontendPlayers[socket.id].y);
   
-//       case "ArrowRight":
-//         socket.emit("keydown", "ArrowRight");
-//         break;
+    const mouseX = (event.clientX - c.left) / dpi;
+    const mouseY = (event.clientY - c.top) / dpi;
   
-//       default:
-//     }
-//   });
-
-// addEventListener("click", (event) => {
-//   const playerPosition = {
-//     x: frontendPlayers[socket.io].x,
-//     y: frontendPlayers[socket.io].y,
-//   };
-
-//   const angle = Math.atan2(
-//     event.clientY - playerPosition.y,
-//     event.clientX - playerPosition.x
-//   );
-
-//   socket.emit('fire', {
-//     x: playerPosition.x,
-//     y: playerPosition.y,
-//     bulletAngle: angle,
-//   })
-// });
+    console.log("mousecanvas: ", mouseX, mouseY);
+    const shotAngle = Math.atan2(mouseY - player.y, mouseX - player.x);
+    console.log(shotAngle);
+  
+    const bullet = {
+      x: player.x,
+      y: player.y,
+      angle: shotAngle,
+    }
+   
+    console.log("bullet: ", bullet.x, bullet.y);
+    socket.emit("addBullet", bullet);
+  });
