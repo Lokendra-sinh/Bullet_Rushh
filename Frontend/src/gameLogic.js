@@ -46,7 +46,7 @@ socket.on("updateFrontendPlayers", (backendPlayers) => {
         // frontendPlayers[id].y = lerp(frontendPlayers[id].y, backendPlayer.y, t);
 
         gsap.to(frontendPlayers[id], {
-          duration: 0.015, // Adjust the duration as needed
+          duration: 0.2, // Adjust the duration as needed
           x: backendPlayer.x,
           y: backendPlayer.y,
           ease: 'power1.out', // Linear ease-out
@@ -54,7 +54,36 @@ socket.on("updateFrontendPlayers", (backendPlayers) => {
       }
     }
   }
+
+  //deleting frontend players
+
+  for (const id in frontendPlayers) {
+    if (!backendPlayers[id]) {
+      delete frontendPlayers[id]
+    }
+  }
+
 });
+
+socket.on('updateBullets', (bullets) => {
+  console.log("bullets are: ", bullets);
+
+  for(const bulletId in frontendBullets){
+    if(!bullets[bulletId]){
+      delete frontendBullets[bulletId];
+      // continue;
+    }
+  }
+
+  for(const id in bullets){
+    if(!frontendBullets[id]){
+      frontendBullets[id] = bullets[id];
+    } else {
+      frontendBullets[id].x += frontendBullets[id].velocity.x;
+      frontendBullets[id].y += frontendBullets[id].velocity.y;
+    }
+  }
+})
 
 function lerp(start, end, t){
   return start + (end -start) * t;
@@ -71,7 +100,14 @@ function animate() {
 
   for (const id in frontendPlayers) {
     const player = frontendPlayers[id];
+    // console.log("player is: ", player);
     drawPlayer(player);
+  }
+
+  for(const id in frontendBullets){
+    const bullet = frontendBullets[id];
+    console.log("bullet is: ", bullet);
+    drawBullet(bullet);
   }
 }
 
@@ -87,7 +123,7 @@ function drawPlayer({ x, y, radius, color }) {
   ctx.closePath();
 }
 
-function drawBullets({ x, y, radius, color }) {
+function drawBullet({ x, y, radius, color }) {
   ctx.beginPath();
   ctx.arc(x, y, radius, 0, Math.PI * 2, false);
   ctx.fillStyle = color;
@@ -135,11 +171,29 @@ window.addEventListener("keyup", (event) => {
   keys[event.key] = false;
 });
 
-addEventListener("click", (event) => {
-  console.log("mouse clicked: ", event.clientX, event.clientY);
+canvas.addEventListener("click", (event) => {
+  // console.log("mouse clicked: ", event.clientX, event.clientY);
+  const c = canvas.getBoundingClientRect();
+  // console.log("canvas: ", c.top, c.left);
+  const player = {
+    x: frontendPlayers[socket.id].x,
+    y: frontendPlayers[socket.id].y,
+  }
+  console.log("player: ", frontendPlayers[socket.id].x, frontendPlayers[socket.id].y);
+
+  const mouseX = (event.clientX - c.left) / dpi;
+  const mouseY = (event.clientY - c.top) / dpi;
+
+  console.log("mousecanvas: ", mouseX, mouseY);
+  const shotAngle = Math.atan2(mouseY - player.y, mouseX - player.x);
+  console.log(shotAngle);
+
   const bullet = {
-    x: event.clientX * dpi,
-    y: event.clientY * dpi,
-  };
-  socket.emit("frontendBullets", bullet);
+    x: player.x,
+    y: player.y,
+    angle: shotAngle,
+  }
+ 
+  console.log("bullet: ", bullet.x, bullet.y);
+  socket.emit("addBullet", bullet);
 });
