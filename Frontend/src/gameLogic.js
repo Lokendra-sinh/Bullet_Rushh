@@ -14,14 +14,14 @@ joinRoomBtn.addEventListener('click', () => {
   socket.emit('joinRoom', 'roomA');
 })
 
-export const canvas = document.getElementById("aimingCanvas");
+const canvas = document.getElementById("aimingCanvas");
 const ctx = canvas.getContext("2d");
-export const dpi = window.devicePixelRatio || 1;
+const dpi = window.devicePixelRatio || 1;
 canvas.width = 1000;
 canvas.height = 600;
 ctx.scale(dpi, dpi);
 
-export const frontendPlayers = {};
+const frontendPlayers = {};
 const frontendBullets = {};
 const playerRequests = [];
 let requestNumber = 0;
