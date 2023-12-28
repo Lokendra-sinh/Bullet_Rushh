@@ -1,7 +1,18 @@
 import io from "socket.io-client";
 import gsap from 'gsap';
 
-const socket = io("http://localhost:3000");
+export const socket = io("http://localhost:3000");
+
+const createRoomBtn = document.querySelector('.createRoom');
+const joinRoomBtn = document.querySelector('.joinRoom');
+
+createRoomBtn.addEventListener('click', () => {
+  socket.emit('createRoom', 'roomA');
+})
+
+joinRoomBtn.addEventListener('click', () => {
+  socket.emit('joinRoom', 'roomA');
+})
 
 const canvas = document.getElementById("aimingCanvas");
 const ctx = canvas.getContext("2d");
@@ -85,6 +96,18 @@ socket.on('updateBullets', (bullets) => {
   }
 })
 
+socket.on('roomCreated', (roomName) => {
+  console.log(`Room created: ${roomName}`);
+});
+
+socket.on('roomJoined', (roomName) => {
+  console.log(`Joined room: ${roomName}`);
+});
+
+socket.on('roomNotFound', () => {
+  console.log('Room not found');
+});
+
 function lerp(start, end, t){
   return start + (end -start) * t;
 }
@@ -109,6 +132,10 @@ function animate() {
     console.log("bullet is: ", bullet);
     drawBullet(bullet);
   }
+
+  // if(!frontendPlayers[socket.id]){
+  //   window.location.reload();
+  // }
 }
 
 animate();
@@ -162,6 +189,8 @@ function updatePlayerPosition() {
 }
 
 setInterval(updatePlayerPosition, 1000/60);
+
+
 
 window.addEventListener("keydown", (event) => {
   keys[event.key] = true;

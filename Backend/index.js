@@ -65,6 +65,22 @@ io.on("connect", (socket) => {
     }
   });
 
+  socket.on('createRoom', (roomId) => {
+    socket.join(roomId);
+    socket.emit('roomCreated', roomId);
+  })
+
+  socket.on('joinRoom', (roomId) => {
+    const rooms = io.sockets.adapter.rooms;
+    if(rooms.has(roomId)){
+      socket.join(roomId);
+      socket.emit('roomJoined', roomId);
+    } else {
+      socket.emit('roomNotFound');
+    }
+
+  })
+
   socket.on("disconnect", () => {
     console.log("inside disconnect");
     delete backendPlayers[socket.id];
