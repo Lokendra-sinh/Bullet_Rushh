@@ -24,23 +24,24 @@
 }
 
 html, body{
+  margin: 0;
+  padding: 0;
   width: 100vw;
   height: 100vh;
+  overflow: hidden;
 }
 
 body {
 
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background-color: black;
-  overflow-x: none;
-  overflow-y: none;
   position: relative;
   display: flex;
   flex-direction: column;
-  /* justify-content: center; */
+  // justify-content: space-between; 
   align-items: center;
   gap: 3rem;
 }
@@ -209,7 +210,35 @@ width: 80%;
       background-color: black;
       font-size: 1rem;
       font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
       cursor: pointer;
+
+      &:hover{
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .signup-spinner {
+        display: none;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        border-color: #fff transparent #fff transparent;
+        animation: signup-spinner 1.2s linear infinite;
+      }
+      
+      @keyframes signup-spinner {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      
   }
 }
 
@@ -284,8 +313,8 @@ width: 80%;
 }
   
   canvas {
-    margin: 0;
-    display: block;
+    margin-bottom: 1rem;
+    // display: block;
     background-color: rgba(0, 0, 0, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
